@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { cn } from '@/lib/utils';
 
@@ -150,7 +151,7 @@ export const AdminSearchInput = ({
         type="search"
         value={value}
         onChange={onChange}
-        className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 rounded-lg bg-white text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
+        className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 rounded-lg bg-white text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         placeholder={placeholder}
       />
     </div>
@@ -173,9 +174,9 @@ export const FilterTabs = ({
           key={option.value}
           onClick={() => onChange(option.value)}
           className={cn(
-            "px-4 py-2 rounded-lg text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 whitespace-nowrap",
+            "px-4 py-2 rounded-lg text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 whitespace-nowrap",
             value === option.value
-              ? "bg-teal-600 text-white shadow-sm"
+              ? "bg-blue-600 text-white shadow-sm"
               : "bg-white text-slate-600 border border-slate-300 hover:bg-slate-50"
           )}
         >
