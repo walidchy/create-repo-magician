@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -167,22 +166,22 @@ const Members: React.FC = () => {
       <div className="min-h-screen bg-white p-6">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="bg-blue-600 rounded-xl shadow-sm p-8 mb-6 text-white">
+          <div className="bg-teal-600 rounded-xl shadow-sm p-8 mb-6 text-white">
             <h1 className="text-3xl font-bold mb-2">Members Management</h1>
-            <p className="text-blue-100 text-lg">Manage gym members and their profiles</p>
+            <p className="text-teal-100 text-lg">Manage gym members and their profiles</p>
           </div>
 
           {/* Controls Section */}
           <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-200">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-4">
               <div>
-                <h2 className="text-xl font-semibold text-blue-600 mb-1">Member Records</h2>
+                <h2 className="text-xl font-semibold text-teal-600 mb-1">Member Records</h2>
                 <p className="text-gray-600">Track and manage member profiles</p>
               </div>
               
               <Button 
                 onClick={() => setIsFormOpen(true)}
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-teal-600 hover:bg-teal-700"
               >
                 <PlusCircle className="h-4 w-4 mr-2" />
                 Add Member
@@ -212,7 +211,7 @@ const Members: React.FC = () => {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200">
             {isLoading ? (
               <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
               </div>
             ) : currentMembers.length > 0 ? (
               <>
@@ -237,7 +236,7 @@ const Members: React.FC = () => {
                         className="grid-cols-[2fr_1fr_100px_150px_150px_120px]"
                       >
                         <div className="flex items-center gap-3">
-                          <Avatar className="h-10 w-10 rounded-lg bg-blue-500 text-white">
+                          <Avatar className="h-10 w-10 rounded-lg bg-teal-500 text-white">
                             <AvatarImage src={member.avatar} alt={member.name} />
                             <AvatarFallback className="rounded-lg">
                               {member.name?.substring(0, 2).toUpperCase() || 'NA'}

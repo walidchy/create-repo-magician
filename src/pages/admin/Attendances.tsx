@@ -10,9 +10,9 @@ const Attendances = () => {
       <div className="min-h-screen bg-white p-6">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="bg-blue-600 rounded-xl shadow-sm p-8 mb-6 text-white">
+          <div className="bg-teal-600 rounded-xl shadow-sm p-8 mb-6 text-white">
             <h1 className="text-3xl font-bold mb-2">Attendance Management</h1>
-            <p className="text-blue-100 text-lg">Track and manage member gym attendance</p>
+            <p className="text-teal-100 text-lg">Track and manage member gym attendance</p>
           </div>
 
           {/* Stats Section */}
