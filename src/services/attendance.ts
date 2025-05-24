@@ -35,6 +35,7 @@ export const getAttendances = async (params?: {
   status?: string;
   search?: string;
   page?: number;
+  limit?: number;
 }): Promise<{
   data: Attendance[];
   current_page: number;
