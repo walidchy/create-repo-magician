@@ -21,7 +21,7 @@ import { getAttendances, checkOutUser } from '@/services/attendance';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 6;
 
 const AttendanceList = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -34,7 +34,8 @@ const AttendanceList = () => {
     queryFn: () => getAttendances({
       status: statusFilter !== 'all' ? statusFilter : undefined,
       search: searchQuery,
-      page: currentPage
+      page: currentPage,
+      limit: ITEMS_PER_PAGE
     }),
   });
 
@@ -84,6 +85,9 @@ const AttendanceList = () => {
   const formatDateTime = (dateString: string) => {
     return format(new Date(dateString), 'MMM dd, yyyy HH:mm');
   };
+
+  // Calculate total pages
+  const totalPages = Math.ceil((data?.total || 0) / ITEMS_PER_PAGE);
 
   return (
     <div className="space-y-6">
@@ -213,29 +217,34 @@ const AttendanceList = () => {
             </TableBody>
           </Table>
           
-          {/* Pagination */}
+          {/* Enhanced Pagination */}
           <div className="flex justify-between items-center p-4 bg-gray-50 border-t">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              disabled={currentPage === 1} 
-              onClick={() => setCurrentPage(currentPage - 1)}
-              className="flex items-center gap-1"
-            >
-              <ChevronLeft className="h-4 w-4" /> Previous
-            </Button>
-            <span className="text-sm text-gray-600">
-              Page {currentPage} of {data?.last_page || 1}
-            </span>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              disabled={currentPage === data?.last_page} 
-              onClick={() => setCurrentPage(currentPage + 1)}
-              className="flex items-center gap-1"
-            >
-              Next <ChevronRight className="h-4 w-4" />
-            </Button>
+            <div className="text-sm text-gray-600">
+              Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, data?.total || 0)} of {data?.total || 0} results
+            </div>
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                disabled={currentPage === 1} 
+                onClick={() => setCurrentPage(currentPage - 1)}
+                className="flex items-center gap-1"
+              >
+                <ChevronLeft className="h-4 w-4" /> Previous
+              </Button>
+              <span className="text-sm text-gray-600 px-3">
+                Page {currentPage} of {totalPages}
+              </span>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                disabled={currentPage === totalPages} 
+                onClick={() => setCurrentPage(currentPage + 1)}
+                className="flex items-center gap-1"
+              >
+                Next <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       )}

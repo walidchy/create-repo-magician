@@ -1,16 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { PlusCircle, Search, Save, X, Edit, Trash2, Eye, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import {
   Card,
   CardContent,
@@ -21,7 +14,6 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import MainLayout from '@/components/layout/MainLayout';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getMembers, deleteMember, updateMember, createMember } from '@/services/members';
 import { Member, Membership, MemberFormData } from '@/types';
 import {
@@ -39,6 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import ClientCard from '@/components/trainer/ClientCard';
 
 const Members: React.FC = () => {
   const [members, setMembers] = useState<Member[]>([]);
@@ -182,43 +175,6 @@ const Members: React.FC = () => {
     return matchesSearch && matchesStatus;
   });
 
-  const hasActiveMembership = (member: Member): boolean => {
-    if (member.membership?.is_active) {
-      return true;
-    }
-    return member.memberships?.some(m => m.is_active) || false;
-  };
-
-  const getMembershipEndDate = (member: Member): string => {
-    if (member.membership?.end_date) {
-      return member.membership.end_date;
-    }
-    
-    if (member.memberships && member.memberships.length > 0) {
-      const sortedMemberships = [...member.memberships].sort((a, b) => 
-        new Date(b.end_date).getTime() - new Date(a.end_date).getTime()
-      );
-      return sortedMemberships[0].end_date;
-    }
-    
-    return '-';
-  };
-
-  const getMembershipName = (member: Member): string => {
-    if (member.membership) {
-      return `Plan #${member.membership.membership_plan_id}`;
-    }
-    
-    if (member.memberships && member.memberships.length > 0) {
-      const latestMembership = [...member.memberships].sort((a, b) => 
-        new Date(b.end_date).getTime() - new Date(a.end_date).getTime()
-      )[0];
-      return latestMembership.membership_plan?.name || `Plan #${latestMembership.id}`;
-    }
-    
-    return 'No membership';
-  };
-
   return (
     <MainLayout>
       <div className="space-y-6">
@@ -282,156 +238,15 @@ const Members: React.FC = () => {
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gym-primary"></div>
               </div>
             ) : filteredMembers.length > 0 ? (
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Member</TableHead>
-                      <TableHead>Membership</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Phone</TableHead>
-                      <TableHead>Membership End</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredMembers.map((member) => {
-                      const isActive = hasActiveMembership(member);
-                      const membershipEndDate = getMembershipEndDate(member);
-                      const membershipName = getMembershipName(member);
-                      
-                      return (
-                        <React.Fragment key={member.id}>
-                          {editingId === member.id ? (
-                            <TableRow className="bg-accent/50">
-                              <TableCell>
-                                <div className="flex items-center gap-3">
-                                  <Avatar>
-                                    <AvatarImage src={editForm.avatar} alt={editForm.name} />
-                                    <AvatarFallback>
-                                      {(editForm.name || '').substring(0, 2).toUpperCase()}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                  <div className="space-y-2">
-                                    <Input
-                                      name="name"
-                                      value={editForm.name || ''}
-                                      onChange={handleEditFormChange}
-                                      className="w-full"
-                                    />
-                                    <Input
-                                      name="email"
-                                      value={editForm.email || ''}
-                                      onChange={handleEditFormChange}
-                                      className="w-full"
-                                    />
-                                  </div>
-                                </div>
-                              </TableCell>
-                              <TableCell>{membershipName}</TableCell>
-                              <TableCell>
-                                <Badge 
-                                  variant={isActive ? 'default' : 'secondary'}
-                                  className={isActive ? 
-                                    'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}
-                                >
-                                  {isActive ? 'Active' : 'Inactive'}
-                                </Badge>
-                              </TableCell>
-                              <TableCell>
-                                <Input
-                                  name="phone"
-                                  value={editForm.phone || ''}
-                                  onChange={handleEditFormChange}
-                                  className="w-full"
-                                />
-                              </TableCell>
-                              <TableCell>
-                                {membershipEndDate !== '-' ? 
-                                  new Date(membershipEndDate).toLocaleDateString() : '-'}
-                              </TableCell>
-                              <TableCell className="text-right space-x-2">
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={handleSaveEdit}
-                                  disabled={isSaving}
-                                >
-                                  {isSaving ? (
-                                    <RefreshCw className="h-4 w-4 mr-1 animate-spin" />
-                                  ) : (
-                                    <Save className="h-4 w-4 mr-1" />
-                                  )}
-                                  Save
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={handleCancelEdit}
-                                  disabled={isSaving}
-                                >
-                                  <X className="h-4 w-4 mr-1" />
-                                  Cancel
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          ) : (
-                            <TableRow>
-                              <TableCell>
-                                <div className="flex items-center gap-3">
-                                  <Avatar>
-                                    <AvatarImage src={member.avatar} alt={member.name} />
-                                    <AvatarFallback>
-                                      {member.name?.substring(0, 2).toUpperCase() || 'NA'}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                  <div>
-                                    <div className="font-medium">{member.name}</div>
-                                    <div className="text-sm text-muted-foreground">
-                                      {member.email}
-                                    </div>
-                                  </div>
-                                </div>
-                              </TableCell>
-                              <TableCell>{membershipName}</TableCell>
-                              <TableCell>
-                                <Badge 
-                                  variant={isActive ? 'default' : 'secondary'}
-                                  className={isActive ? 
-                                    'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}
-                                >
-                                  {isActive ? 'Active' : 'Inactive'}
-                                </Badge>
-                              </TableCell>
-                              <TableCell>{member.phone || 'Not provided'}</TableCell>
-                              <TableCell>
-                                {membershipEndDate !== '-' ? 
-                                  new Date(membershipEndDate).toLocaleDateString() : '-'}
-                              </TableCell>
-                              <TableCell className="text-right space-x-2">
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm" 
-                                  onClick={() => handleEditClick(member)}
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm" 
-                                  className="text-red-500 hover:text-red-700"
-                                  onClick={() => handleDeleteMember(member.id)}
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          )}
-                        </React.Fragment>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredMembers.map((member) => (
+                  <ClientCard
+                    key={member.id}
+                    member={member}
+                    onEdit={handleEditClick}
+                    onDelete={handleDeleteMember}
+                  />
+                ))}
               </div>
             ) : (
               <div className="text-center py-10">
@@ -448,6 +263,76 @@ const Members: React.FC = () => {
           </CardContent>
         </Card>
 
+        {/* Edit Dialog */}
+        {editingId && (
+          <Dialog open={true} onOpenChange={() => setEditingId(null)}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Edit Member</DialogTitle>
+                <DialogDescription>
+                  Update member information
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Full Name</label>
+                  <Input
+                    name="name"
+                    value={editForm.name || ''}
+                    onChange={handleEditFormChange}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Email</label>
+                  <Input
+                    name="email"
+                    type="email"
+                    value={editForm.email || ''}
+                    onChange={handleEditFormChange}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Phone Number</label>
+                  <Input
+                    name="phone"
+                    value={editForm.phone || ''}
+                    onChange={handleEditFormChange}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Avatar URL</label>
+                  <Input
+                    name="avatar"
+                    value={editForm.avatar || ''}
+                    onChange={handleEditFormChange}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button 
+                  variant="outline" 
+                  onClick={handleCancelEdit}
+                  disabled={isSaving}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={handleSaveEdit}
+                  disabled={isSaving}
+                >
+                  {isSaving ? (
+                    <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <Save className="h-4 w-4 mr-2" />
+                  )}
+                  Save Changes
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
+
+        {/* Add Member Dialog */}
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogContent>
             <DialogHeader>
