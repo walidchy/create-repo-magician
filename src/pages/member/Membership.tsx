@@ -114,158 +114,33 @@ const Memberships: React.FC = () => {
     });
   };
 
+  const getMembershipCategory = (index: number, membership: Membership) => {
+    if (membership.category) return membership.category.toUpperCase();
+    
+    const categories = ['BASIC', 'STANDARD', 'PREMIUM'];
+    return categories[index % categories.length];
+  };
+
+  const getCategoryColor = (category: string) => {
+    switch (category.toLowerCase()) {
+      case 'premium':
+        return 'bg-red-100 text-red-800';
+      case 'standard':
+        return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-green-100 text-green-800';
+    }
+  };
+
+  const isPopularPlan = (index: number) => index === 1;
+
   return (
     <MainLayout>
-      <style>
-        {`
-        .membership-card {
-          background: white;
-          border: 1px solid #e2e8f0;
-          border-radius: 8px;
-          padding: 1.5rem;
-          transition: box-shadow 0.2s ease;
-          position: relative;
-        }
-        
-        .membership-card:hover {
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        
-        .membership-card.featured {
-          border-color: #6366f1;
-          border-width: 2px;
-        }
-        
-        .section-title {
-          font-size: 1.5rem;
-          font-weight: 600;
-          color: #1e293b;
-          margin-bottom: 1.5rem;
-        }
-        
-        .status-badge {
-          position: absolute;
-          top: 1rem;
-          right: 1rem;
-          padding: 0.25rem 0.75rem;
-          border-radius: 4px;
-          font-size: 0.75rem;
-          font-weight: 500;
-        }
-        
-        .status-active {
-          background: #dcfce7;
-          color: #166534;
-        }
-        
-        .status-inactive {
-          background: #fee2e2;
-          color: #991b1b;
-        }
-        
-        .status-featured {
-          background: #ddd6fe;
-          color: #6d28d9;
-        }
-        
-        .membership-title {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: #1e293b;
-          margin-bottom: 0.5rem;
-        }
-        
-        .membership-price {
-          font-size: 2rem;
-          font-weight: 700;
-          color: #6366f1;
-          margin-bottom: 0.25rem;
-        }
-        
-        .membership-duration {
-          color: #64748b;
-          font-size: 0.9rem;
-          margin-bottom: 1rem;
-        }
-        
-        .membership-description {
-          color: #64748b;
-          margin-bottom: 1.5rem;
-        }
-        
-        .features-list {
-          list-style: none;
-          margin-bottom: 2rem;
-        }
-        
-        .features-list li {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          margin-bottom: 0.75rem;
-          color: #374151;
-        }
-        
-        .check-icon {
-          width: 16px;
-          height: 16px;
-          color: #10b981;
-          flex-shrink: 0;
-        }
-        
-        .dumbbell-logo {
-          position: relative;
-          width: 110px;
-          height: 60px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          margin: 0 auto;
-        }
-        
-        .dumbbell-bar {
-          width: 60px;
-          height: 10px;
-          background-color: #0e3b5f;
-          border-radius: 4px;
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-        }
-        
-        .dumbbell-weight {
-          width: 20px;
-          height: 50px;
-          background-color: #0e3b5f;
-          border-radius: 4px;
-          position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
-        }
-        
-        .dumbbell-weight.left {
-          left: 10px;
-        }
-        
-        .dumbbell-weight.right {
-          right: 10px;
-        }
-        `}
-      </style>
-
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
           <div>
-            <h1 className="section-title">Membership Plans</h1>
-            <p className="text-muted-foreground">Choose a membership that fits your fitness goals</p>
-          </div>
-          <div className="mt-4 md:mt-0">
-            <div className="dumbbell-logo">
-              <div className="dumbbell-bar"></div>
-              <div className="dumbbell-weight left"></div>
-              <div className="dumbbell-weight right"></div>
-            </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Membership Plans</h1>
+            <p className="text-gray-600">Choose a membership that fits your fitness goals</p>
           </div>
         </div>
 
@@ -291,48 +166,56 @@ const Memberships: React.FC = () => {
                 <h2 className="text-xl font-semibold mb-4">Your Current Memberships</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {activeMemberships.map((membership) => (
-                    <div key={`current-${membership.id}`} className="membership-card featured">
-                      <div className="status-badge status-active">Active</div>
-                      <h3 className="membership-title">
-                        {membership.name || (membership.membership_plan && membership.membership_plan.name) || 'Membership'}
-                      </h3>
-                      <div className="membership-price">
-                        {formatPrice(membership.price || 0)}
+                    <Card key={`current-${membership.id}`} className="relative border-2 border-blue-500">
+                      <div className="absolute top-4 right-4">
+                        <Badge className="bg-green-100 text-green-800">Active</Badge>
                       </div>
-                      <div className="membership-duration">
-                        Valid until: {new Date(membership.end_date).toLocaleDateString()}
-                      </div>
-                      <p className="membership-description">
-                        {membership.description || (membership.membership_plan && membership.membership_plan.description) || 'Your active membership plan'}
-                      </p>
-                      
-                      <ul className="features-list">
-                        {Array.isArray(membership.features) && membership.features.length > 0 ? (
-                          membership.features.map((feature, idx) => (
-                            <li key={idx}>
-                              <Check className="check-icon" size={16} />
-                              <span>{feature}</span>
+                      <CardHeader className="text-center pb-2">
+                        <CardTitle className="text-lg font-semibold">
+                          {membership.name || (membership.membership_plan && membership.membership_plan.name) || 'Membership'}
+                        </CardTitle>
+                        <div className="text-3xl font-bold text-gray-900">
+                          {formatPrice(membership.price || 0)}
+                          <span className="text-base font-normal text-gray-500">/mo</span>
+                        </div>
+                        <CardDescription>
+                          Valid until: {new Date(membership.end_date).toLocaleDateString()}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-600 mb-4">
+                          {membership.description || (membership.membership_plan && membership.membership_plan.description) || 'Your active membership plan'}
+                        </p>
+                        
+                        <ul className="space-y-2">
+                          {Array.isArray(membership.features) && membership.features.length > 0 ? (
+                            membership.features.map((feature, idx) => (
+                              <li key={idx} className="flex items-center text-sm">
+                                <Check className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                                <span>{feature}</span>
+                              </li>
+                            ))
+                          ) : membership.membership_plan && Array.isArray(membership.membership_plan.features) ? (
+                            membership.membership_plan.features.map((feature, idx) => (
+                              <li key={idx} className="flex items-center text-sm">
+                                <Check className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                                <span>{feature}</span>
+                              </li>
+                            ))
+                          ) : (
+                            <li className="flex items-center text-sm">
+                              <Check className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                              <span>Standard membership benefits</span>
                             </li>
-                          ))
-                        ) : membership.membership_plan && Array.isArray(membership.membership_plan.features) ? (
-                          membership.membership_plan.features.map((feature, idx) => (
-                            <li key={idx}>
-                              <Check className="check-icon" size={16} />
-                              <span>{feature}</span>
-                            </li>
-                          ))
-                        ) : (
-                          <li>
-                            <Check className="check-icon" size={16} />
-                            <span>Standard membership benefits</span>
-                          </li>
-                        )}
-                      </ul>
-                      
-                      <Button className="w-full bg-white text-primary hover:bg-gray-50 border border-primary" disabled>
-                        Current Plan
-                      </Button>
-                    </div>
+                          )}
+                        </ul>
+                      </CardContent>
+                      <CardFooter>
+                        <Button className="w-full" variant="outline" disabled>
+                          Current Plan
+                        </Button>
+                      </CardFooter>
+                    </Card>
                   ))}
                 </div>
               </div>
@@ -380,44 +263,69 @@ const Memberships: React.FC = () => {
             ) : filteredMemberships.length > 0 ? (
               <div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {paginatedMemberships.map((membership, index) => (
-                    <div 
-                      key={membership.id} 
-                      className={`membership-card ${index === 1 ? 'featured' : ''}`}
-                    >
-                      <div className={`status-badge ${membership.is_active ? 'status-active' : 'status-inactive'}`}>
-                        {membership.is_active ? 'Active' : 'Inactive'}
-                      </div>
-                      
-                      <h3 className="membership-title">{membership.name}</h3>
-                      <div className="membership-price">{formatPrice(membership.price)}</div>
-                      <div className="membership-duration">{Math.floor(membership.duration_days / 30)} months</div>
-                      
-                      <p className="membership-description">{membership.description}</p>
-                      
-                      <ul className="features-list">
-                        {Array.isArray(membership.features) && membership.features.map((feature, idx) => (
-                          <li key={idx}>
-                            <Check className="check-icon" size={16} />
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      
-                      <Button
-                        className={`w-full ${
-                          !membership.is_active ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 
-                          isSubscribed(membership.id) ? 'bg-white text-primary hover:bg-gray-50 border border-primary' : 
-                          index === 1 ? 'bg-primary text-white hover:bg-primary/90' : 'bg-primary text-white hover:bg-primary/90'
-                        }`}
-                        onClick={() => membership.is_active && !isSubscribed(membership.id) && handleSubscribe(membership)}
-                        disabled={!membership.is_active || isSubscribed(membership.id)}
+                  {paginatedMemberships.map((membership, index) => {
+                    const category = getMembershipCategory(index, membership);
+                    const isPopular = isPopularPlan(index);
+                    
+                    return (
+                      <Card 
+                        key={membership.id} 
+                        className={`relative ${isPopular ? 'border-2 border-blue-500 shadow-lg' : 'border border-gray-200'} ${!membership.is_active ? 'opacity-60' : ''}`}
                       >
-                        {isSubscribed(membership.id) ? 'Current Plan' : 
-                          membership.is_active ? 'Subscribe Now' : 'Currently Unavailable'}
-                      </Button>
-                    </div>
-                  ))}
+                        <div className="absolute top-4 right-4">
+                          <Badge className={getCategoryColor(category)}>
+                            {category}
+                          </Badge>
+                        </div>
+                        
+                        {isPopular && (
+                          <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                            <Badge className="bg-blue-500 text-white px-3 py-1">Most Popular</Badge>
+                          </div>
+                        )}
+                        
+                        <CardHeader className="text-center pb-2">
+                          <CardTitle className="text-lg font-semibold">{membership.name}</CardTitle>
+                          <div className="text-3xl font-bold text-gray-900">
+                            {formatPrice(membership.price)}
+                            <span className="text-base font-normal text-gray-500">/mo</span>
+                          </div>
+                          <CardDescription>
+                            Perfect for {category.toLowerCase()} fitness needs
+                          </CardDescription>
+                        </CardHeader>
+                        
+                        <CardContent>
+                          <p className="text-gray-600 mb-4">{membership.description}</p>
+                          
+                          <ul className="space-y-2">
+                            {Array.isArray(membership.features) && membership.features.map((feature, idx) => (
+                              <li key={idx} className="flex items-center text-sm">
+                                <Check className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                                <span>{feature}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </CardContent>
+                        
+                        <CardFooter>
+                          <Button
+                            className={`w-full ${
+                              !membership.is_active ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 
+                              isSubscribed(membership.id) ? 'bg-white text-primary hover:bg-gray-50 border border-primary' : 
+                              isPopular ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-blue-500 hover:bg-blue-600 text-white'
+                            }`}
+                            onClick={() => membership.is_active && !isSubscribed(membership.id) && handleSubscribe(membership)}
+                            disabled={!membership.is_active || isSubscribed(membership.id)}
+                            variant={isSubscribed(membership.id) ? 'outline' : 'default'}
+                          >
+                            {isSubscribed(membership.id) ? 'Current Plan' : 
+                              membership.is_active ? 'Get started →' : 'Currently Unavailable'}
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                    );
+                  })}
                 </div>
                 
                 <div className="flex justify-center mt-8 space-x-4">
