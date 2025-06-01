@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
@@ -134,32 +133,31 @@ const TrainerActivities: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="min-h-screen bg-gray-50">
         <div className="p-6 space-y-8">
           {/* Header Section */}
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 p-8 shadow-xl">
-            <div className="absolute inset-0 bg-black/10"></div>
-            <div className="relative flex flex-col md:flex-row justify-between md:items-center gap-6">
-              <div className="text-white">
-                <h1 className="text-4xl font-bold mb-3">My Activities</h1>
-                <p className="text-blue-100 text-lg">
-                  Manage and organize your fitness classes with ease
-                </p>
-                <div className="flex items-center gap-4 mt-4">
-                  <div className="flex items-center gap-2">
+          <Card className="shadow-lg border-0">
+            <CardContent className="p-8">
+              <div className="flex flex-col md:flex-row justify-between md:items-center gap-6">
+                <div>
+                  <h1 className="text-4xl font-bold mb-3 text-gray-900">My Activities</h1>
+                  <p className="text-gray-600 text-lg mb-4">
+                    Manage and organize your fitness classes with ease
+                  </p>
+                  <div className="flex items-center gap-2 text-gray-600">
                     <Dumbbell className="h-5 w-5" />
                     <span className="text-sm">{activities.length} Activities</span>
                   </div>
                 </div>
+                <Button asChild size="lg" className="bg-gray-900 text-white hover:bg-gray-800 shadow-lg">
+                  <Link to="/trainer/activities/new">
+                    <Plus className="mr-2 h-5 w-5" />
+                    Create New Activity
+                  </Link>
+                </Button>
               </div>
-              <Button asChild size="lg" className="bg-white text-blue-600 hover:bg-blue-50 shadow-lg">
-                <Link to="/trainer/activities/new">
-                  <Plus className="mr-2 h-5 w-5" />
-                  Create New Activity
-                </Link>
-              </Button>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {/* Search Section */}
           <Card className="shadow-lg border-0">
@@ -169,7 +167,7 @@ const TrainerActivities: React.FC = () => {
                   placeholder="Search activities by name, category, or description..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 h-12 text-lg border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                  className="pl-10 h-12 text-lg border-gray-200 focus:border-gray-500 focus:ring-2 focus:ring-gray-200"
                 />
                 <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
                   <Dumbbell className="h-5 w-5 text-gray-400" />
@@ -182,15 +180,15 @@ const TrainerActivities: React.FC = () => {
           {isLoading ? (
             <div className="flex justify-center items-center h-64">
               <div className="text-center">
-                <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mx-auto mb-4"></div>
+                <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-500 border-t-transparent mx-auto mb-4"></div>
                 <p className="text-gray-600 text-lg">Loading your activities...</p>
               </div>
             </div>
           ) : filteredActivities.length === 0 ? (
             <Card className="shadow-lg border-0">
               <CardContent className="flex flex-col items-center justify-center h-96 text-center p-8">
-                <div className="rounded-full bg-blue-100 p-6 mb-6">
-                  <Dumbbell className="h-16 w-16 text-blue-500" />
+                <div className="rounded-full bg-gray-100 p-6 mb-6">
+                  <Dumbbell className="h-16 w-16 text-gray-500" />
                 </div>
                 <h3 className="text-2xl font-semibold mb-3 text-gray-900">No activities found</h3>
                 <p className="text-gray-600 max-w-md mb-6 text-lg">
@@ -199,7 +197,7 @@ const TrainerActivities: React.FC = () => {
                     : "No activities match your search criteria. Try adjusting your search terms."
                   }
                 </p>
-                <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700">
+                <Button asChild size="lg" className="bg-gray-900 hover:bg-gray-800">
                   <Link to="/trainer/activities/new">
                     <Plus className="mr-2 h-5 w-5" />
                     Create Your First Activity
@@ -212,7 +210,7 @@ const TrainerActivities: React.FC = () => {
               {filteredActivities.map((activity) => (
                 <Card key={activity.id} className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg hover:-translate-y-1">
                   {editingId === activity.id ? (
-                    <div className="p-6 space-y-4 bg-blue-50">
+                    <div className="p-6 space-y-4 bg-gray-50">
                       <Input
                         name="name"
                         value={editForm.name || ''}
@@ -284,7 +282,7 @@ const TrainerActivities: React.FC = () => {
                             {activity.difficulty_level}
                           </Badge>
                         </div>
-                        <CardTitle className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                        <CardTitle className="text-xl font-bold text-gray-900 group-hover:text-gray-700 transition-colors">
                           {activity.name}
                         </CardTitle>
                         <p className="text-gray-600 text-sm line-clamp-2">
@@ -294,15 +292,15 @@ const TrainerActivities: React.FC = () => {
                       <CardContent className="pt-0">
                         <div className="grid grid-cols-2 gap-4 mb-4">
                           <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <Clock className="h-4 w-4 text-blue-500" />
+                            <Clock className="h-4 w-4 text-gray-500" />
                             <span>{activity.duration_minutes} min</span>
                           </div>
                           <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <Users className="h-4 w-4 text-green-500" />
+                            <Users className="h-4 w-4 text-gray-500" />
                             <span>{activity.max_participants} max</span>
                           </div>
                           <div className="flex items-center gap-2 text-sm text-gray-600 col-span-2">
-                            <MapPin className="h-4 w-4 text-red-500" />
+                            <MapPin className="h-4 w-4 text-gray-500" />
                             <span className="truncate">{activity.location}</span>
                           </div>
                         </div>
@@ -318,7 +316,7 @@ const TrainerActivities: React.FC = () => {
                             variant="outline" 
                             size="sm" 
                             onClick={() => handleEditClick(activity)}
-                            className="hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300"
+                            className="hover:bg-gray-50 hover:text-gray-600 hover:border-gray-300"
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -341,6 +339,7 @@ const TrainerActivities: React.FC = () => {
         </div>
       </div>
 
+      {/* Delete Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
