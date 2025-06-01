@@ -4,8 +4,24 @@ import { Activity, ApiResponse, User, Member } from '@/types';
 // Define the function to get activities for a trainer
 export const getTrainerActivities = async (): Promise<Activity[]> => {
   try {
-    const response = await api.get<ApiResponse<Activity[]>>('/trainers/activities');
-    return response.data.data || [];
+    const response = await api.get('/trainers/activities');
+    
+    // Handle the response structure where activities are nested
+    if (response.data.activities && Array.isArray(response.data.activities)) {
+      return response.data.activities;
+    }
+    
+    // Fallback for other response formats
+    if (response.data.data && Array.isArray(response.data.data)) {
+      return response.data.data;
+    }
+    
+    // If response.data is directly an array
+    if (Array.isArray(response.data)) {
+      return response.data;
+    }
+    
+    return [];
   } catch (error) {
     console.error('Error fetching trainer activities:', error);
     return [];
