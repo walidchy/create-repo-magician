@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { Search, Calendar, Badge as BadgeIcon, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -99,8 +98,17 @@ const Memberships: React.FC = () => {
 
   const totalPages = Math.ceil(filteredMemberships.length / itemsPerPage);
 
-  const formatPrice = (price: number) =>
-    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price);
+  const formatPrice = (price: number | undefined) => {
+    if (!price && price !== 0) return '$0.00';
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price);
+  };
+
+  const getMembershipPrice = (membership: any) => {
+    // Try multiple ways to get the price
+    if (membership.price !== undefined) return membership.price;
+    if (membership.membership_plan?.price !== undefined) return membership.membership_plan.price;
+    return 0;
+  };
 
   const isSubscribed = (membershipId: number) => {
     return activeMemberships.some(m => {
@@ -175,7 +183,7 @@ const Memberships: React.FC = () => {
                           {membership.name || (membership.membership_plan && membership.membership_plan.name) || 'Membership'}
                         </CardTitle>
                         <div className="text-3xl font-bold text-gray-900">
-                          {formatPrice(membership.price || 0)}
+                          {formatPrice(getMembershipPrice(membership))}
                           <span className="text-base font-normal text-gray-500">/mo</span>
                         </div>
                         <CardDescription>
