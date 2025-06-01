@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
@@ -149,7 +150,7 @@ const TrainerActivities: React.FC = () => {
                     <span className="text-sm">{activities.length} Activities</span>
                   </div>
                 </div>
-                <Button asChild size="lg" className="bg-gray-900 text-white hover:bg-gray-800 shadow-lg">
+                <Button asChild size="lg" className="bg-blue-600 text-white hover:bg-blue-700 shadow-lg">
                   <Link to="/trainer/activities/new">
                     <Plus className="mr-2 h-5 w-5" />
                     Create New Activity
